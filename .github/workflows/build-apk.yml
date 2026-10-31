@@ -1,0 +1,43 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install Cordova globally
+        run: npm install -g cordova
+
+      - name: Create Cordova App
+        run: |
+          cordova create myApp com.simulasyon.app WebSimulasyon
+          cd myApp
+          rm -rf www/*
+          cp -r ../* www/ 2>/dev/null || true
+          rm -rf www/myApp www/.github
+          
+          cordova platform add android
+          cordova build android --release
+      
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-simulasyon-apk
+          path: myApp/platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk
