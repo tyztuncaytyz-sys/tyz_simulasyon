@@ -34,10 +34,11 @@ jobs:
           rm -rf www/myApp www/.github
           
           cordova platform add android
-          cordova build android --release
+          cordova build android --debug
       
       - name: Upload APK
         uses: actions/upload-artifact@v4
+      
         with:
           name: web-simulasyon-apk
-          path: myApp/platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk
+          path: myApp/platforms/android/app/build/outputs/apk/debug/app-debug.apk
